@@ -57,13 +57,14 @@ export function TagsGroup({ name, tags }: ITagsGroupProps): JSX.Element {
     }
   };
 
-  const renderedTags = tagsList.map((tag) => (
+  const renderedTags = tagsList.map((tag, index) => (
     <Tag
       type={tag.type}
       id={tag.id}
       name={tag.name}
       onDelete={onDeleteTag}
       key={tag.id}
+      position={index}
     />
   ));
 

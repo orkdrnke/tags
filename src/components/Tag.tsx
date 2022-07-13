@@ -4,11 +4,12 @@ import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 
 interface ITagProps extends ITag {
   onDelete: (id: number) => void;
+  position: number;
 }
 
-export const Tag = ({ name, id, onDelete }: ITagProps) => {
+export const Tag = ({ name, id, onDelete, position }: ITagProps) => {
   const [hovered, setHovered] = useState(false);
-  const isFirst = id === 1;
+  const isFirst = position === 0;
   return (
     <div
       className="mr-2 px-3 py-1 flex items-center bg-gray-200 rounded-2xl h-5"
