@@ -1,6 +1,34 @@
-# Getting Started with Create React App
+# General Info
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It is a small app that let's you add tags by categories.
+
+It does not perform any fetching.
+But to make it more interactive the data gets passed to the Home component after clicking a button.
+
+Also, I made some changes to the given data.
+Namely, there were little naming differences in the data structures which added unnecessary complexity.
+I approached it as I would on a real project - talk to the backend guys and ask if the data can be structured and named
+more efficiently. Let's imagine they said 'Yes'.first-letter:
+
+This way I changed this
+
+```
+const suggestedTagsPortfolio = ['European', 'Eco-friendly', 'German']
+const suggestedTagsCertifications = ['ISO 9001', 'Vegan', 'Organic']
+```
+
+to this
+
+```
+export const suggestions = {
+  portfolio: ["European", "Eco-friendly", "German"],
+  certificates: ["ISO 9001", "Vegan", "Organic"],
+};
+```
+
+The following changed allowed easier access to the values and also manipulations on the "supplier" data
+became more straighforward.
 
 ## Available Scripts
 
@@ -13,11 +41,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `npm run build`
 
@@ -38,9 +61,3 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
