@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 import { suggestions, supplier } from "./supplier";
-import Home from "./Home";
-import Header from "./Header";
+import Home from "./components/Home";
+import Header from "./components/Header";
 import { Box } from "@mui/system";
 
 export enum TypeOfTags {

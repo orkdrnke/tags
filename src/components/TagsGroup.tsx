@@ -1,17 +1,12 @@
 import React, { useContext, useState } from "react";
-import {
-  SupplierType,
-  SuggestionsType,
-  ITag,
-  TypeOfTags,
-  AppContext,
-} from "./App";
-import StarIcon from "@mui/icons-material/Star";
+import { SuggestionsType, ITag, TypeOfTags, AppContext } from "../App";
 import { Autocomplete, Box, Button, TextField } from "@mui/material";
-import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
+import { Tag } from "./Tag";
 
-interface IHomeProps {
-  supplier?: SupplierType;
+const MAX_RANDOM_VAL = 10000;
+
+function getRandomInt() {
+  return Math.floor(Math.random() * MAX_RANDOM_VAL);
 }
 
 interface ITagsGroupProps {
@@ -19,46 +14,13 @@ interface ITagsGroupProps {
   tags: ITag[];
 }
 
-interface ITagProps extends ITag {
-  onDelete: (id: number) => void;
-}
-
-const Tag = ({ type, name, id, onDelete }: ITagProps) => {
-  const [hovered, setHovered] = useState(false);
-  const isFirst = id === 1;
-  return (
-    <div
-      className="mr-2 px-3 py-1 flex items-center bg-gray-200 rounded-2xl h-5"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <span className="mr-1 cursor-default">{name}</span>
-      {!isFirst && hovered ? (
-        <ClearRoundedIcon
-          fontSize="small"
-          color="disabled"
-          className="cursor-pointer"
-          onClick={() => onDelete(id)}
-        />
-      ) : (
-        ""
-      )}
-    </div>
-  );
-};
-
 type TypeEnumKey = keyof typeof TypeOfTags;
 
-const TagsGroup = ({ name, tags }: ITagsGroupProps) => {
-  console.log("🚀 ~ file: Home.tsx ~ line 53 ~ TagsGroup ~ name", name);
+export function TagsGroup({ name, tags }: ITagsGroupProps): JSX.Element {
   const [tagsList, setTagsList] = useState(tags);
   const [editing, setEditing] = useState(false);
   const typeOfTags = TypeOfTags[name.toUpperCase() as TypeEnumKey];
   const suggestions = useContext(AppContext);
-  console.log(
-    "🚀 ~ file: Home.tsx ~ line 57 ~ TagsGroup ~ suggestions",
-    suggestions
-  );
 
   const onDeleteTag = (id: number) => {
     const newtagsList = tagsList.filter((tag) => tag.id !== id);
@@ -70,14 +32,28 @@ const TagsGroup = ({ name, tags }: ITagsGroupProps) => {
   };
 
   const onEnterKeypress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    function addTag() {
       const newTag: ITag = {
         name: e.target.value,
-        id: tagsList.length + 1,
+        id: tagsList.length + getRandomInt(),
         type: typeOfTags,
       };
       setTagsList([...tagsList, newTag]);
+      e.target.value = "";
+    }
+
+    if (e.key === "Enter" && e.target.value !== "") {
+      addTag();
       setEditing(false);
+    }
+
+    if (e.key === "Tab") {
+      e.preventDefault();
+    }
+
+    if (e.key === "Tab" && e.target.value !== "") {
+      e.preventDefault();
+      addTag();
     }
   };
 
@@ -105,14 +81,18 @@ const TagsGroup = ({ name, tags }: ITagsGroupProps) => {
         size="small"
         autoHighlight
         autoSelect
+        clearOnEscape
         placeholder="Tag name"
         options={suggestions[name as keyof SuggestionsType]}
         sx={{ width: 200 }}
         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          // prevent navigation out of the select before the value is selected
+          if (e.key === "Tab") e.preventDefault();
           if (
             suggestions[name as keyof SuggestionsType].includes(e.target.value)
-          )
+          ) {
             onEnterKeypress(e);
+          }
         }}
         renderInput={(params) => <TextField {...params} autoFocus />}
       />
@@ -132,35 +112,4 @@ const TagsGroup = ({ name, tags }: ITagsGroupProps) => {
       </div>
     </Box>
   );
-};
-
-const Home = ({ supplier }: IHomeProps) => {
-  if (supplier === undefined)
-    return (
-      <div className="flex w-full justify-center m-4">
-        Supplier data wasn't loaded. Smash that "Load" button above!
-      </div>
-    );
-
-  const suplierTagGroups = Object.keys(supplier)
-    .filter((key) => key.includes("tag"))
-    .map((key) => {
-      const groupName = key.replace("tags-", "");
-      const tagsInGroup = supplier[key as keyof Omit<SupplierType, "name">];
-      return <TagsGroup name={groupName} tags={tagsInGroup} key={key} />;
-    });
-
-  return (
-    <>
-      <div className="inline-block border-solid border-0 border-b border-b-slate-400 my-5">
-        <p className="flex items-center py-2 text-3xl m-0">
-          <StarIcon color="primary" classes={{ root: "text-sm" }} />
-          {supplier.name}
-        </p>
-      </div>
-      <section>{suplierTagGroups}</section>
-    </>
-  );
-};
-
-export default Home;
+}
